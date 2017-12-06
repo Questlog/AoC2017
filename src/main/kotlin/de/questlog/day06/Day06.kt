@@ -21,9 +21,9 @@ public fun MutableList<Int>.incrementBanks(startBank : Int, blocks : Int) : List
     return this
 }
 
-fun getAllStatesUntilLoop(banks: List<Int>) : List<List<Int>>{
+public fun List<Int>.statesUntilLoop() : List<List<Int>>{
     val states = ArrayList<List<Int>>()
-    val currentState = ArrayList(banks)
+    val currentState = ArrayList(this)
     do {
         states.add(ArrayList(currentState))
         val bank = currentState.maxIndex()
@@ -39,13 +39,13 @@ fun solve(banks : String) : Int{
     return solve(banks.split('\t').map { it.toInt() })
 }
 fun solve(banks : List<Int>) : Int {
-    return getAllStatesUntilLoop(banks).size - 1
+    return banks.statesUntilLoop().size - 1
 }
 fun solvePartTwo(banks : String) : Int{
     return solvePartTwo(banks.split('\t').map { it.toInt() })
 }
 fun solvePartTwo(banks : List<Int>) : Int {
-    return getAllStatesUntilLoop(banks).let {
+    return banks.statesUntilLoop().let {
         it.size - it.indexOf(it.last()) - 1
     }
 }
