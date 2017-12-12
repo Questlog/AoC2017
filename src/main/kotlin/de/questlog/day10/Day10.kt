@@ -52,7 +52,7 @@ fun solve(data : List<Int>, rounds : Int, internalSize : Int = 255) : Day10Resul
         hex
     }
 
-    return Day10Result(data[0] * data[1], hashString)
+    return Day10Result(sparseHash[0] * sparseHash[1], hashString)
 }
 
 fun knotHashRound(sparseHash : MutableList<Int>, data : List<Int>, skipSize: SkipSize) {
