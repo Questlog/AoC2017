@@ -21,26 +21,30 @@ data class SkipSize(
 fun solveSingleRound(numbersSize : Int, puzzleInput : String) : Day10Result {
     val skipList = puzzleInput.split(",").map { it.trim().toInt() }
 
-    return solve(skipList, 1, numbersSize)
-}
-
-fun solveFull(plainText : String) : Day10Result{
-    return solve(
-        //convert to byte array, add suffix
-        plainText.map { it.toByte().toInt() }.plus( asList(17, 31, 73, 47, 23) ),
-        64
+    return solve (
+        data = skipList,
+        rounds = 1,
+        internalSize = numbersSize
     )
 }
 
-fun solve(key : List<Int>, rounds : Int, internalSize : Int = 255) : Day10Result {
-    val data = (0..internalSize).map { it }.toMutableList()
+fun solveFull(plainText : String) : Day10Result{
+    return solve (
+        //convert to byte array, add suffix
+        data = plainText.map { it.toByte().toInt() }.plus( asList(17, 31, 73, 47, 23) ),
+        rounds = 64
+    )
+}
+
+fun solve(data : List<Int>, rounds : Int, internalSize : Int = 255) : Day10Result {
+    val sparseHash = (0..internalSize).map { it }.toMutableList()
     val skipSize = SkipSize(internalSize+1)
 
     repeat(rounds){
-        knotHashRound(data, key, skipSize)
+        knotHashRound(sparseHash, data, skipSize)
     }
 
-    val denseHash = reduceToDenseHash(data)
+    val denseHash = reduceToDenseHash(sparseHash)
     val hashString = denseHash.joinToString(separator = "") {
         var hex = Integer.toHexString(it)
         if(hex.length < 2) //"a" -> "0a"
@@ -51,16 +55,16 @@ fun solve(key : List<Int>, rounds : Int, internalSize : Int = 255) : Day10Result
     return Day10Result(data[0] * data[1], hashString)
 }
 
-fun knotHashRound(data : MutableList<Int>, key : List<Int>, skipSize: SkipSize) {
-    for (it in key) {
+fun knotHashRound(sparseHash : MutableList<Int>, data : List<Int>, skipSize: SkipSize) {
+    for (it in data) {
         if(it == 0) {
             skipSize.increase(0)
             continue
         }
-        val subList = data.subListCycled(skipSize.currentPos, skipSize.currentPos + it - 1)
+        val subList = sparseHash.subListCycled(skipSize.currentPos, skipSize.currentPos + it - 1)
         subList.reverse()
-        data.replaceRangeCycle(skipSize.currentPos, subList)
-        skipSize.increase(it.toInt())
+        sparseHash.replaceRangeCycle(skipSize.currentPos, subList)
+        skipSize.increase(it)
     }
 }
 
