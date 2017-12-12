@@ -37,7 +37,7 @@ fun solveFull(plainText : String) : Day10Result{
 }
 
 fun solve(data : List<Int>, rounds : Int, internalSize : Int = 255) : Day10Result {
-    val sparseHash = (0..internalSize).map { it }.toMutableList()
+    val sparseHash = (0..internalSize).toMutableList()
     val skipSize = SkipSize(internalSize+1)
 
     repeat(rounds){
